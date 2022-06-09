@@ -1,0 +1,370 @@
+<style type="text/css">
+	.bg-gradient-warning {
+    background-color: #224abe;
+    background-image: linear-gradient(180deg,#224abe 10%,#224abe 100%);
+    background-size: cover;
+}
+</style>
+
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+class Divisi extends MY_Controller {
+
+	function __construct()
+	{
+		parent::__construct();	
+		parent::logon();
+			
+    
+        $this->load->model('laporan/M_divisi');   
+
+		
+
+	}
+
+	public function index()
+	{
+		$data = array (
+                        'title' => 'Report Division',
+						'css' => 'content/laporan/divisi/css',
+						'content' => 'content/laporan/divisi/index',
+						'script' => 'content/laporan/divisi/script'
+
+						) ;
+		$this->load->view('template', $data);
+	}
+
+	public function divisi()
+	{
+		$hasil = $this->M_divisi->divisi() ;
+		$data = array (
+                        'hasil' => $hasil
+						) ;
+		$this->load->view('content/laporan/divisi/divisi', $data);
+	}
+
+	public function material()
+	{
+		$hasil = $this->M_divisi->material() ;
+		$data = array (
+                        'hasil' => $hasil
+						) ;
+		$this->load->view('content/laporan/divisi/material', $data);
+	}
+	
+	public function preview($from, $to)
+	{
+		ini_set('error_reporting', E_STRICT);
+		//get all item
+		$all_item_detil[]= new stdClass;
+		
+		$all_item = $this->M_divisi->get_all_item_preview($to);		
+		
+		for($i=0; $i < count($all_item); $i++){
+			$kode = $all_item[$i]->kode;
+			$item_detil =  $this->M_divisi->detail_item($kode, $to);
+			$stock_begining = round($item_detil->qty_begining,1) + round($item_detil->qty_in,1) - round($item_detil->qty_ng,1) - round($item_detil->qty_out,1);
+			
+			//hari kemarin dari start
+			$tgl_kemarin_from    =date('Y-m-d', strtotime("-1 day", strtotime($from)));
+			$all_item_kemarin = $this->M_divisi->detail_item($kode,$tgl_kemarin_from);	
+			 
+			// jika stock masih ada, maka ditampilkan
+			
+			if( $stock_begining > 0){
+				$all_item_detil[$i]->item = $item_detil->item;
+				$all_item_detil[$i]->kode = $item_detil->kode;
+				$all_item_detil[$i]->unit = $item_detil->unit;
+				$all_item_detil[$i]->qty_begining = round($item_detil->qty_begining,1);
+				$all_item_detil[$i]->qty_in = round($item_detil->qty_in,1);
+				$all_item_detil[$i]->qty_ng = round($item_detil->qty_ng,1);
+				$all_item_detil[$i]->qty_out = round($item_detil->qty_out,1);
+				
+				$all_item_detil[$i]->total_kemarin =round($all_item_kemarin->qty_begining,1) + round($all_item_kemarin->qty_in,1) - round($all_item_kemarin->qty_ng,1) - round($all_item_kemarin->qty_out,1) ;
+			}
+		}
+		
+			  	
+						
+		$data = array (
+						'hasil' => $all_item_detil,
+						'from' => $from,
+						'to' => $to,
+						'kode' => '',
+						'nama' => '',
+						'kode_item' => '',
+						'nama_item' => '',
+                        'title' => 'Laporan Per divisi',
+						'css' => 'content/laporan/divisi/css',
+						'content' => 'content/laporan/divisi/preview',
+						'script' => 'content/laporan/divisi/script'
+
+						) ;
+		$this->load->view('template', $data);
+	}
+
+	public function filter($kode_divisi, $from, $to,$kode_item)
+	{
+		$all_item_detil[]= new stdClass;
+		if($kode_item =="noll")
+		{
+			$all_item = $this->M_divisi->get_item_filter_preview($kode_divisi, $to);
+		}else
+			{
+				$all_item = $this->M_divisi->get_item_filter_preview2($kode_divisi, $to,$kode_item);
+			}
+		
+		$row = $this->M_divisi->detail_divisi($kode_divisi);
+		$row_m = $this->M_divisi->detail_item12($kode_item);
+		
+		for($i=0; $i < count($all_item); $i++){
+			$kode = $all_item[$i]->kode;
+			
+			$item_detil =  $this->M_divisi->detail_item_divisi($kode, $kode_divisi, $to );
+			
+			$stock_begining = $item_detil->qty_begining + $item_detil->qty_in - $item_detil->qty_ng - $item_detil->qty_out;
+			
+			// jika stock masih ada, maka ditampilkan
+			if( $stock_begining > 0){
+				$all_item_detil[$i]->item = $item_detil->item;
+				$all_item_detil[$i]->kode = $item_detil->kode;
+				$all_item_detil[$i]->unit = $item_detil->unit;
+				$all_item_detil[$i]->qty_begining = $item_detil->qty_begining;
+				$all_item_detil[$i]->qty_in = $item_detil->qty_in;
+				$all_item_detil[$i]->qty_ng = $item_detil->qty_ng;
+				$all_item_detil[$i]->qty_out = $item_detil->qty_out;
+			}
+		}
+		
+		$data = array (
+						'hasil' => $all_item_detil,
+						'from'=> $from,
+						'to' => $to,
+						'kode' => $row->kode_divisi,
+						'nama' => $row->nama_divisi,
+						'kode_item' => $row_m->kode,
+						'nama_item' => $row_m->item,
+                        'title' => 'Laporan Per divisi',
+						'css' => 'content/laporan/divisi/css',
+						'content' => 'content/laporan/divisi/filter',
+						'script' => 'content/laporan/divisi/script'
+						) ;
+		$this->load->view('template', $data);
+	}
+
+
+	public function preview_excel($from, $to)
+	{
+		$all_item_detil[]= new stdClass;
+		
+		$all_item = $this->M_divisi->get_all_item_preview($to);		
+		for($i=0; $i < count($all_item); $i++){
+			$kode = $all_item[$i]->kode;
+			$item_detil =  $this->M_divisi->detail_item($kode, $to);
+			$stock_begining = $item_detil->qty_begining + $item_detil->qty_in - $item_detil->qty_ng - $item_detil->qty_out;
+			
+			// jika stock masih ada, maka ditampilkan
+			if( $stock_begining > 0){
+				$all_item_detil[$i]->item = $item_detil->item;
+				$all_item_detil[$i]->kode = $item_detil->kode;
+				$all_item_detil[$i]->unit = $item_detil->unit;
+				$all_item_detil[$i]->qty_begining = $item_detil->qty_begining;
+				$all_item_detil[$i]->qty_in = $item_detil->qty_in;
+				$all_item_detil[$i]->qty_ng = $item_detil->qty_ng;
+				$all_item_detil[$i]->qty_out = $item_detil->qty_out;
+			}
+		}
+		
+		$data = array (
+						'hasil' => $all_item_detil,
+						'from' => $from,
+						'to' => $to,
+						) ;
+		$this->load->view('content/laporan/divisi/excel', $data);
+	}
+	
+	
+	public function filter_excel($kode_divisi, $from, $to)
+	{
+		//$hasil = $this->M_divisi->get_filter($kode_divisi, $from, $to);
+		$all_item_detil[]= new stdClass;
+		
+		$all_item = $this->M_divisi->get_item_filter_preview($kode_divisi, $to);		
+		$row = $this->M_divisi->detail_divisi($kode_divisi);
+		
+		for($i=0; $i < count($all_item); $i++){
+			$kode = $all_item[$i]->kode;
+			
+			$item_detil =  $this->M_divisi->detail_item_divisi($kode, $kode_divisi, $to );
+			
+			$stock_begining = $item_detil->qty_begining + $item_detil->qty_in - $item_detil->qty_ng - $item_detil->qty_out;
+			
+			// jika stock masih ada, maka ditampilkan
+			if( $stock_begining > 0){
+				$all_item_detil[$i]->item = $item_detil->item;
+				$all_item_detil[$i]->kode = $item_detil->kode;
+				$all_item_detil[$i]->unit = $item_detil->unit;
+				$all_item_detil[$i]->qty_begining = $item_detil->qty_begining;
+				$all_item_detil[$i]->qty_in = $item_detil->qty_in;
+				$all_item_detil[$i]->qty_ng = $item_detil->qty_ng;
+				$all_item_detil[$i]->qty_out = $item_detil->qty_out;
+			}
+		}
+		
+		$data = array (
+						'hasil' => $all_item_detil,
+						'from' => $from,
+						'to' => $to,
+
+						) ;
+		$this->load->view('content/laporan/divisi/excel', $data);
+	}
+	public function filter_excel_v2($kode_divisi, $from, $to,$kode_item)
+	{
+		/*memanggil file xlsxwriter*/
+        include_once APPPATH.'/third_party/PHP_XLSXWriter/xlsxwriter.class.php';
+
+        /* agar menghilangkan peringatan eror*/
+        ini_set('display_errors', 0);
+        ini_set('log_errors', 1);
+        error_reporting(E_ALL & ~E_NOTICE);
+        /*---*/
+        $filename = "export_material.xlsx";
+
+        header('Content-disposition: attachment; filename="' . XLSXWriter::sanitize_filename($filename) . '"');
+        header("Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        header('Content-Transfer-Encoding: binary');
+        header('Cache-Control: must-revalidate');
+        header('Pragma: public');
+
+        $writer         = new XLSXWriter();
+        /*untuk lebar kolom*/
+        $widths         = array(8.9,46.45,14.36,14.36,14.36,14.36,14.36,14.36,14.36);
+        /*memanggildata*/
+        $nomor=1;
+        $header = array('No' => 'string', 'Description' => 'string', 'Code' => 'string' , 'Unit' => 'string'
+        , 'Beginning Stock' => '##0.0###' , 'Import Etc' => '##0.0###', 'NG' => '##0.0###', 'Prod' => '##0.0###', 'Ending Stok' => '##0.0###'  );
+
+
+        /*untuk border*/
+        $styles0        = array( 'border'=>'left,right,top,bottom');
+        $col_options    = array('widths'=>$widths,'fill'=>'#FFFF00','font-style'=>'bold', 'halign'=>'center');
+
+        $writer->setAuthor('PT ...');
+        /*membuat sheet*/
+        $writer->writeSheetHeader('Laporan Divisi', $header, $col_options);
+		
+		if($kode_item =="noll")
+		{
+			$all_item = $this->M_divisi->get_item_filter_preview($kode_divisi, $to);
+		}else
+			{
+				$all_item = $this->M_divisi->get_item_filter_preview2($kode_divisi, $to,$kode_item);
+			}
+				
+		for($i=0; $i < count($all_item); $i++){
+			$kode = $all_item[$i]->kode;
+			$item_detil =  $this->M_divisi->detail_item($kode, $to);
+				$month_begining = date('m', strtotime('-1 MONTH', strtotime($from)));
+						$year_begining ='';
+						if($month_begining == '12'){
+							$year_begining = date('Y', strtotime('-1 YEAR', strtotime($from)));
+						}
+						else{
+							$year_begining = date('Y', strtotime($from));
+						}	
+						$qty_beg = $this->M_divisi->jml_qty_begining_fix($kode, $month_begining, $year_begining);
+				$stock_begining = $qty_beg->jml_qty_begining + $item_detil->qty_in - $item_detil->qty_ng - $item_detil->qty_out;					
+			
+			// jika stock masih ada, maka ditampilkan
+			if( $stock_begining > 0){
+				$item = $item_detil->item;
+				$kode = $item_detil->kode;
+				$unit = $item_detil->unit;
+				$qty_begining = $item_detil->qty_begining;
+				$qty_in = $item_detil->qty_in;
+				$qty_ng = $item_detil->qty_ng;
+				$qty_out = $item_detil->qty_out;
+				
+				$ttl = $item_detil->qty_begining + $item_detil->qty_in - $item_detil->qty_ng - $item_detil->qty_out ;
+				$writer->writeSheetRow('Laporan Divisi',array($nomor,$item,$kode,$unit,$qty_beg->jml_qty_begining,$qty_in,$qty_ng,$qty_out,$ttl));
+				$nomor++;
+			}
+		}
+		$writer->writeToStdOut();
+        exit(0);       
+	}
+	
+	public function preview_excel_v2($from, $to)
+	{
+		
+		/*memanggil file xlsxwriter*/
+        include_once APPPATH.'/third_party/PHP_XLSXWriter/xlsxwriter.class.php';
+
+        /* agar menghilangkan peringatan eror*/
+        ini_set('display_errors', 0);
+        ini_set('log_errors', 1);
+        error_reporting(E_ALL & ~E_NOTICE);
+        /*---*/
+        $filename = "export_material.xlsx";
+
+        header('Content-disposition: attachment; filename="' . XLSXWriter::sanitize_filename($filename) . '"');
+        header("Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        header('Content-Transfer-Encoding: binary');
+        header('Cache-Control: must-revalidate');
+        header('Pragma: public');
+
+        $writer         = new XLSXWriter();
+        /*untuk lebar kolom*/
+        $widths         = array(8.9,46.45,14.36,14.36,14.36,14.36,14.36,14.36,14.36);
+        /*memanggildata*/
+        $nomor=1;
+        $header = array('No' => 'string', 'Description' => 'string', 'Code' => 'string' , 'Unit' => 'string'
+        , 'Beginning Stock' => '##0.0###' , 'Import Etc' => '##0.0###', 'NG' => '##0.0###', 'Prod' => '##0.0###', 'Ending Stok' => '##0.0###'  );
+
+
+        /*untuk border*/
+        $styles0        = array( 'border'=>'left,right,top,bottom');
+        $col_options    = array('widths'=>$widths,'fill'=>'#FFFF00','font-style'=>'bold', 'halign'=>'center');
+
+        $writer->setAuthor('PT ...');
+        /*membuat sheet*/
+        $writer->writeSheetHeader('Laporan Divisi', $header, $col_options);
+		
+		
+		$all_item = $this->M_divisi->get_all_item_preview($to);		
+		for($i=0; $i < count($all_item); $i++){
+			$kode = $all_item[$i]->kode;
+			$item_detil =  $this->M_divisi->detail_item($kode, $to);
+			
+				$month_begining = date('m', strtotime('-1 MONTH', strtotime($from)));
+						$year_begining ='';
+						if($month_begining == '12'){
+							$year_begining = date('Y', strtotime('-1 YEAR', strtotime($from)));
+						}
+						else{
+							$year_begining = date('Y', strtotime($from));
+						}	
+						$qty_beg = $this->M_divisi->jml_qty_begining_fix($kode, $month_begining, $year_begining);
+			$stock_begining = $qty_beg->jml_qty_begining + $item_detil->qty_in - $item_detil->qty_ng - $item_detil->qty_out;						
+			// jika stock masih ada, maka ditampilkan
+			if( $stock_begining > 0){
+				$item = $item_detil->item;
+				$kode = $item_detil->kode;
+				$unit = $item_detil->unit;
+				$qty_begining = $qty_beg->jml_qty_begining;
+				$qty_in = $item_detil->qty_in;
+				$qty_ng = $item_detil->qty_ng;
+				$qty_out = $item_detil->qty_out;
+				
+				$ttl = $qty_beg->jml_qty_begining + $item_detil->qty_in - $item_detil->qty_ng - $item_detil->qty_out ;
+				$writer->writeSheetRow('Laporan Divisi',array($nomor,$item,$kode,$unit,$qty_begining,$qty_in,$qty_ng,$qty_out,$ttl));
+				$nomor++;
+			}
+		}
+		$writer->writeToStdOut();
+        exit(0);       
+	}
+}
+

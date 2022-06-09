@@ -1,0 +1,21 @@
+[20-Jan-2022 10:29:41 Asia/Kolkata] PHP Fatal error:  Cannot redeclare Item::filter() in /home/ikcicoid/public_html/system/application/controllers/laporan/Item.php on line 102
+[20-Jan-2022 10:49:54 Asia/Kolkata] PHP Fatal error:  Cannot redeclare Divisi::filter() in /home/ikcicoid/public_html/system/application/controllers/laporan/Divisi.php on line 89
+[20-Jan-2022 11:00:18 Asia/Kolkata] PHP Fatal error:  Cannot redeclare M_material::data() in /home/ikcicoid/public_html/system/application/models/M_material.php on line 38
+[22-Jan-2022 09:15:30 Asia/Kolkata] PHP Fatal error:  Allowed memory size of 134217728 bytes exhausted (tried to allocate 130039808 bytes) in /home/ikcicoid/public_html/system/application/views/content/laporan/item/filter.php on line 366
+[22-Jan-2022 09:15:30 Asia/Kolkata] PHP Fatal error:  Allowed memory size of 134217728 bytes exhausted (tried to allocate 130035712 bytes) in Unknown on line 0
+[22-Jan-2022 09:15:34 Asia/Kolkata] PHP Fatal error:  Allowed memory size of 134217728 bytes exhausted (tried to allocate 130039808 bytes) in /home/ikcicoid/public_html/system/application/views/content/laporan/item/filter.php on line 366
+[22-Jan-2022 09:15:34 Asia/Kolkata] PHP Fatal error:  Allowed memory size of 134217728 bytes exhausted (tried to allocate 130035712 bytes) in Unknown on line 0
+[22-Jan-2022 09:15:37 Asia/Kolkata] PHP Fatal error:  Allowed memory size of 134217728 bytes exhausted (tried to allocate 130039808 bytes) in /home/ikcicoid/public_html/system/application/views/content/laporan/item/filter.php on line 366
+[22-Jan-2022 09:15:37 Asia/Kolkata] PHP Fatal error:  Allowed memory size of 134217728 bytes exhausted (tried to allocate 130035712 bytes) in Unknown on line 0
+[22-Jan-2022 09:15:47 Asia/Kolkata] PHP Fatal error:  Allowed memory size of 134217728 bytes exhausted (tried to allocate 130039808 bytes) in /home/ikcicoid/public_html/system/application/views/content/laporan/item/filter.php on line 366
+[22-Jan-2022 09:15:47 Asia/Kolkata] PHP Fatal error:  Allowed memory size of 134217728 bytes exhausted (tried to allocate 130035712 bytes) in Unknown on line 0
+[22-Jan-2022 09:16:19 Asia/Kolkata] PHP Fatal error:  Allowed memory size of 134217728 bytes exhausted (tried to allocate 130039808 bytes) in /home/ikcicoid/public_html/system/application/views/content/laporan/item/filter.php on line 366
+[22-Jan-2022 09:16:19 Asia/Kolkata] PHP Fatal error:  Allowed memory size of 134217728 bytes exhausted (tried to allocate 130035712 bytes) in Unknown on line 0
+[22-Jan-2022 09:16:21 Asia/Kolkata] PHP Fatal error:  Allowed memory size of 134217728 bytes exhausted (tried to allocate 130039808 bytes) in /home/ikcicoid/public_html/system/application/views/content/laporan/item/filter.php on line 366
+[22-Jan-2022 09:16:21 Asia/Kolkata] PHP Fatal error:  Allowed memory size of 134217728 bytes exhausted (tried to allocate 130035712 bytes) in Unknown on line 0
+[22-Jan-2022 09:16:21 Asia/Kolkata] PHP Fatal error:  Allowed memory size of 134217728 bytes exhausted (tried to allocate 130039808 bytes) in /home/ikcicoid/public_html/system/application/views/content/laporan/item/filter.php on line 366
+[22-Jan-2022 09:16:21 Asia/Kolkata] PHP Fatal error:  Allowed memory size of 134217728 bytes exhausted (tried to allocate 130035712 bytes) in Unknown on line 0
+[22-Jan-2022 09:16:22 Asia/Kolkata] PHP Fatal error:  Allowed memory size of 134217728 bytes exhausted (tried to allocate 130039808 bytes) in /home/ikcicoid/public_html/system/application/views/content/laporan/item/filter.php on line 366
+[22-Jan-2022 09:16:22 Asia/Kolkata] PHP Fatal error:  Allowed memory size of 134217728 bytes exhausted (tried to allocate 130035712 bytes) in Unknown on line 0
+[22-Jan-2022 09:16:23 Asia/Kolkata] PHP Fatal error:  Allowed memory size of 134217728 bytes exhausted (tried to allocate 130039808 bytes) in /home/ikcicoid/public_html/system/application/views/content/laporan/item/filter.php on line 366
+[22-Jan-2022 09:16:23 Asia/Kolkata] PHP Fatal error:  Allowed memory size of 134217728 bytes exhausted (tried to allocate 130035712 bytes) in Unknown on line 0
